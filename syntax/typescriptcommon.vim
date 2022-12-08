@@ -31,7 +31,7 @@ syntax match  jsVariableDef           /\<\K\k*/
 
 syntax region jsFuncArgs           matchgroup=jsFuncParens
   \ start=/(/  end=/)/
-  \ contains=jsFuncArgCommas,jsComment,jsFuncArgExpression,jsDestructuringBlock,jsDestructuringArray,jsRestExpression,jsFlowArgumentDef
+  \ contains=jsFuncArgCommas,jsComment,jsFuncArgExpression,jsDestructuringBlock,jsDestructuringArray,jsRestExpression,jsFlowArgumentDef,tsTypeAnnotation
   \ nextgroup=jsCommentFunction,jsFuncBlock,jsFlowReturn,tsTypeAnnotation
   \ contained extend fold skipwhite skipempty
 
@@ -47,6 +47,16 @@ syntax region jsDestructuringArray matchgroup=jsDestructuringBraces
   \ nextgroup=jsFlowDefinition,tsTypeAnnotation
   \ contained extend fold
 
+syntax region jsBlock matchgroup=jsBraces
+  \ start=/{/  end=/}/
+  \ contains=@jsAll,jsSpreadExpression,@tsStatement
+  \ extend fold
+
+" Used to support nested items in a .d.ts, basically. import, export, etc.,
+" would otherwise only ever work top-level
+syntax cluster jsAll
+  \ contains=@jsExpression,jsStorageClass,jsConditional,jsWhile,jsFor,jsReturn,jsException,jsTry,jsNoise,jsBlockLabel,jsBlock,jsImport,jsFrom,jsExport,jsComment
+
 
 
 syntax keyword tsImportType  type
@@ -55,6 +65,20 @@ syntax keyword tsImportType  type
 syntax keyword tsCastKeyword as
   \ nextgroup=@tsType
   \ skipwhite
+
+syntax keyword tsModule namespace module
+
+syntax keyword tsAmbientDeclaration declare
+  \ nextgroup=@tsAmbients
+  \ skipwhite skipempty
+
+syntax cluster tsAmbients contains=
+  \ tsInterfaceKeyword,
+  \ tsFuncKeyword,
+  \ tsClassKeyword,
+  \ tsAbstract,
+  \ tsEnumKeyword,tsEnum,
+  \ tsModule
 
 
 " Types
@@ -153,7 +177,7 @@ syntax match tsPredefinedType /unique symbol/
 
 syntax region tsObjectType matchgroup=tsBraces
   \ start=/{/ end=/}/
-  \ contains=@tsTypeMember,tsEndColons,@tsComments,tsAccessibilityModifier,tsReadonlyModifier
+  \ contains=jsComment,@tsTypeMember,tsEndColons,tsAccessibilityModifier,tsReadonlyModifier
   \ nextgroup=@tsTypeOperator
   \ contained skipwhite skipnl fold
 
@@ -394,7 +418,7 @@ syntax match tsInterfaceComma /,/ contained nextgroup=tsInterfaceHeritage skipwh
 
 "Block VariableStatement EmptyStatement ExpressionStatement IfStatement IterationStatement ContinueStatement BreakStatement ReturnStatement WithStatement LabelledStatement SwitchStatement ThrowStatement TryStatement DebuggerStatement
 syntax cluster tsStatement
-  \ contains=tsBlock,tsVariable,
+  \ contains=tsBlock,
   \ @tsTopExpression,tsAssign,
   \ tsConditional,tsRepeat,tsBranch,
   \ tsLabel,tsStatementKeyword,
@@ -500,10 +524,15 @@ hi def link tsPredefinedType Type
 
 hi def link tsImportType          Keyword
 hi def link tsAliasKeyword        Keyword
+hi def link tsAmbientDeclaration  Keyword
+hi def link tsModule              Keyword
 hi def link tsInterfaceKeyword    Keyword
+hi def link tsInterfaceExtends    Keyword
 hi def link tsCastKeyword         Keyword
+hi def link tsStringLiteralType   Keyword
 
 hi def link tsTypeAnnotation      jsObjectColon
+hi def link tsTypeBrackets        jsObjectColon
 
 if exists('s:cpo_save')
   let &cpo = s:cpo_save
