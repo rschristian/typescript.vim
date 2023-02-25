@@ -6,7 +6,7 @@ Vim ships with [yats](https://github.com/HerringtonDarkholme/yats.vim) by defaul
 
 > Exuberant Highlighting. The most elaborate or byzatine syntax highlighting for TypeScript.
 
-While I applaud the effort, yats has completely forgotten what TS is: a superset language. It has created a situation in which there are no overlapping syntax groups between JS & TS, which is a travesty. At best, this means the user will have to manually ensure `jsFucntion` and `typescriptFuncKeyword` align in color and at worst they're stuck manually writing syntax groups because one offers a highlighting group that the other does not.
+While I applaud the effort, yats has completely forgotten what TS is: a superset language. It has created a situation in which there are no overlapping syntax groups between JS & TS, which is a travesty. At best, this means the user will have to manually ensure `jsFunction` and `typescriptFuncKeyword` align in color and at worst they're stuck manually writing syntax groups because one offers a highlighting group that the other does not.
 
 I find it incredibly frustrating to switch between files to have my syntax highlighting change, and I didn't have hours to throw at my color scheme to ensure everything matched up perfectly. The solution? Make a TS syntax plugin that remembers its roots as a superset.
 
