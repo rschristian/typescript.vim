@@ -22,7 +22,7 @@ syntax keyword jsImport               import
   \ skipwhite skipempty
 
 syntax keyword jsExport               export
-  \ nextgroup=@jsAll,jsModuleGroup,jsExportDefault,jsModuleAsterisk,jsModuleKeyword,jsFlowTypeStatement,tsInterfaceKeyword,tsAliasKeyword
+  \ nextgroup=@jsAll,jsModuleGroup,jsExportDefault,jsModuleAsterisk,jsModuleKeyword,jsFlowTypeStatement,tsInterfaceKeyword,tsImportType
   \ skipwhite skipempty
 
 syntax match  jsVariableDef           /\<\K\k*/
