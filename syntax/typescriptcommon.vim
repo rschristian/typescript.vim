@@ -22,12 +22,19 @@ syntax keyword jsImport               import
   \ skipwhite skipempty
 
 syntax keyword jsExport               export
-  \ nextgroup=@jsAll,jsModuleGroup,jsExportDefault,jsModuleAsterisk,jsModuleKeyword,jsFlowTypeStatement,tsInterfaceKeyword,tsImportType
+  \ nextgroup=@jsAll,jsModuleAsterisk,jsModuleKeyword,jsModuleGroup,jsExportDefault,jsFlowTypeStatement,tsInterfaceKeyword,tsImportType
   \ skipwhite skipempty
 
 syntax match  jsVariableDef           /\<\K\k*/
   \ nextgroup=jsFlowDefinition,tsTypeAnnotation
   \ contained skipwhite skipempty
+
+syntax match   jsFuncName             /\<\K\k*/
+  \ nextgroup=jsFuncArgs,jsFlowFunctionGroup,tsGenericFunc
+  \ contained skipwhite skipempty
+
+" Parens OR TS generic can follow a function call
+syntax match   jsFuncCall             /\<\K\k*\ze[\s\n]*[<(]/
 
 syntax region jsFuncArgs           matchgroup=jsFuncParens
   \ start=/(/  end=/)/
@@ -60,7 +67,8 @@ syntax cluster jsAll
 
 
 syntax keyword tsImportType  type
-  \ contained
+  \ nextgroup=jsModuleAsterisk,jsModuleKeyword,jsModuleGroup,jsFlowImportType
+  \ contained skipwhite skipempty
 
 syntax keyword tsCastKeyword as
   \ nextgroup=@tsType
@@ -206,7 +214,7 @@ syntax cluster tsFunctionType contains=tsGenericFunc,tsFuncType
 syntax region tsGenericFunc matchgroup=tsTypeBrackets
   \ start=/</ end=/>/
   \ contains=tsTypeParameter
-  \ nextgroup=tsFuncType
+  \ nextgroup=jsFuncArgs
   \ containedin=tsFunctionType
   \ contained skipwhite skipnl
 
@@ -454,14 +462,6 @@ syntax cluster tsValue
 
 syntax cluster tsEventExpression       contains=tsArrowFuncDef,tsParenExp,@tsValue,tsRegexpString,@tsEventTypes,tsOperator,tsGlobal,jsxRegion
 
-syntax keyword tsAsyncFuncKeyword      async
-  \ nextgroup=tsArrowFuncDef
-  \ skipwhite
-
-syntax keyword tsAsyncFuncKeyword      await
-  \ nextgroup=@tsValue
-  \ skipwhite
-
 syntax match   tsAsyncFunc             contained /*/
   \ nextgroup=tsFuncName,@tsCallSignature
   \ skipwhite skipempty
@@ -521,6 +521,7 @@ syntax match tsDecorator /@\([_$a-zA-Z][_$a-zA-Z0-9]*\.\)*[_$a-zA-Z][_$a-zA-Z0-9
 
 
 hi def link tsPredefinedType Type
+hi def link tsTypeReference  Type
 
 hi def link tsImportType          Keyword
 hi def link tsAliasKeyword        Keyword
@@ -530,9 +531,14 @@ hi def link tsInterfaceKeyword    Keyword
 hi def link tsInterfaceExtends    Keyword
 hi def link tsCastKeyword         Keyword
 hi def link tsStringLiteralType   Keyword
+hi def link tsReadonlyModifier    Keyword
 
 hi def link tsTypeAnnotation      jsObjectColon
 hi def link tsTypeBrackets        jsObjectColon
+
+hi def link tsFuncTypeArrow       jsArrowFunction
+
+hi def link tsFuncType            jsFuncArgs
 
 if exists('s:cpo_save')
   let &cpo = s:cpo_save
